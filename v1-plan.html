@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Artifaq — v1 plan</title>
+<style>
+  :root {
+    --bg: #0e0f12;
+    --panel: #16181d;
+    --panel-2: #1c1f26;
+    --line: #262a33;
+    --ink: #e7e9ee;
+    --ink-2: #a8adb8;
+    --ink-3: #6b7280;
+    --accent: #ffb86b;
+    --accent-2: #7ee0c8;
+    --warn: #ff7a7a;
+    --good: #7ee0c8;
+    --link: #9cc4ff;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  body { margin: 0; line-height: 1.55; font-size: 16px; }
+  a { color: var(--link); text-decoration: none; border-bottom: 1px dotted #455; }
+  a:hover { border-bottom-style: solid; }
+  code, pre, .mono { font-family: var(--mono); }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 56px 28px 120px; }
+
+  header.hero {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 36px;
+    margin-bottom: 44px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: 44px;
+    line-height: 1.05;
+    margin: 8px 0 16px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  h1 .accent { color: var(--accent); }
+  .tagline {
+    font-size: 19px;
+    color: var(--ink-2);
+    max-width: 680px;
+    margin: 0;
+  }
+
+  nav.toc {
+    margin: 28px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+  nav.toc a {
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--panel);
+  }
+  nav.toc a:hover { color: var(--ink); border-color: #3a4050; }
+
+  section { margin: 64px 0; scroll-margin-top: 24px; }
+  h2 {
+    font-size: 13px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--accent);
+    margin: 0 0 18px;
+    font-weight: 600;
+  }
+  h3 { font-size: 22px; margin: 0 0 12px; letter-spacing: -0.01em; }
+  h4 { font-size: 15px; margin: 18px 0 6px; color: var(--ink); letter-spacing: .01em; }
+  p { margin: 0 0 14px; color: #d3d6dd; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; color: #d3d6dd; }
+  li { margin: 6px 0; }
+  hr { border: 0; border-top: 1px dashed var(--line); margin: 36px 0; }
+
+  .pull {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 18px;
+    font-size: 19px;
+    line-height: 1.45;
+    color: var(--ink);
+    margin: 18px 0 26px;
+    font-weight: 500;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .grid-2 { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+  .grid-3 { display: grid; gap: 14px; grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 720px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    h1 { font-size: 34px; }
+    .wrap { padding: 36px 18px 80px; }
+  }
+
+  /* journey */
+  .journey { counter-reset: step; }
+  .step {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+  }
+  .step:first-child { border-top: 0; }
+  .step .num {
+    counter-increment: step;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+  .step .num::before { content: "0" counter(step); }
+  .step h3 { margin: 0 0 6px; font-size: 18px; }
+  .step .body { color: var(--ink-2); font-size: 15px; line-height: 1.55; }
+  .step .body code { background: var(--panel-2); padding: 1px 6px; border-radius: 4px; color: var(--ink); font-size: 13px; }
+
+  /* decisions */
+  .decision {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    margin: 14px 0;
+    overflow: hidden;
+  }
+  .decision header {
+    background: var(--panel);
+    padding: 14px 18px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .decision header .q { font-weight: 600; color: var(--ink); font-size: 15px; }
+  .decision header .verdict {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent-2);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    white-space: nowrap;
+  }
+  .decision .why {
+    padding: 14px 18px 6px;
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+  .decision .why p { margin: 0 0 10px; color: var(--ink-2); }
+  .decision .why p:last-child { margin-bottom: 8px; }
+
+  /* tables */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0 16px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--ink-3); font-weight: 500; font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+  td.pick { color: var(--accent-2); font-weight: 600; }
+  td.skip { color: var(--ink-3); }
+
+  /* stack */
+  .stack-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 14px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .stack-row:first-child { border-top: 0; }
+  .stack-row .label { font-family: var(--mono); font-size: 13px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+  .stack-row .pick { color: var(--ink); font-weight: 500; }
+  .stack-row .note { color: var(--ink-2); font-size: 14px; margin-top: 2px; }
+
+  /* timeline */
+  .timeline { border-left: 2px solid var(--line); margin-left: 6px; padding-left: 22px; }
+  .timeline .week { margin: 0 0 24px; }
+  .timeline .week h4 { margin: 0 0 6px; color: var(--accent); font-family: var(--mono); font-size: 12px; letter-spacing: .12em; }
+  .timeline .week ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink-2); }
+
+  /* foot */
+  footer.foot {
+    border-top: 1px solid var(--line);
+    margin-top: 80px;
+    padding-top: 24px;
+    color: var(--ink-3);
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+  footer.foot a { color: var(--ink-2); }
+
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    margin-right: 6px;
+  }
+  .badge.good { color: var(--good); border-color: #2a4a42; }
+  .badge.warn { color: var(--warn); border-color: #4a2a2a; }
+
+  /* svg containers */
+  .diagram {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    overflow-x: auto;
+  }
+  .diagram svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+
+  pre.url {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 6px 0 14px;
+    font-size: 13px;
+    color: var(--accent-2);
+    overflow-x: auto;
+  }
+
+  .kbd {
+    display: inline-block;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  .callout {
+    background: linear-gradient(180deg, rgba(255,184,107,0.05), rgba(255,184,107,0));
+    border: 1px solid #3a2f1e;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .callout strong { color: var(--accent); }
+
+  .cut {
+    color: var(--ink-3);
+    text-decoration: line-through;
+    text-decoration-color: #4a2a2a;
+    text-decoration-thickness: 1px;
+  }
+
+  .stack-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    color: var(--good);
+    background: rgba(126,224,200,0.06);
+    border: 1px solid #2a4a42;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    margin-top: 18px;
+  }
+  .stack-pill .dot { width: 6px; height: 6px; background: var(--good); border-radius: 999px; box-shadow: 0 0 0 3px rgba(126,224,200,0.12); }
+
+  /* PRINCIPLES */
+  .principle {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    padding: 18px 24px;
+    border-top: 1px solid var(--line);
+  }
+  .principle:first-child { border-top: 0; }
+  .principle .p-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    padding-top: 2px;
+    letter-spacing: .1em;
+  }
+  .principle h4 { margin: 0 0 4px; font-size: 15px; }
+  .principle p { margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.55; }
+
+  /* FILE LIST MOCKUP */
+  .mock {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 18px 0 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .mock-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--ink-3);
+    font-size: 13px;
+  }
+  .mock-bar svg { color: var(--ink-3); }
+  .mock-placeholder { flex: 1; }
+  .mock-shortcut {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    border: 1px solid var(--line);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .mock-summary {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 6px 6px;
+    font-size: 12px;
+    color: var(--ink-3);
+    font-family: var(--mono);
+  }
+  .mock-path { color: var(--ink-2); }
+  .tree { padding: 0 2px; }
+  .t-folder {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 6px 6px;
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 500;
+    cursor: default;
+  }
+  .t-folder .chev {
+    color: var(--ink-3);
+    font-size: 11px;
+    width: 12px;
+    display: inline-block;
+  }
+  .t-folder .t-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-left: 4px;
+  }
+  .t-file {
+    display: grid;
+    grid-template-columns: 24px 14px 1fr auto 56px;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 8px 8px 6px;
+    border-radius: 6px;
+    color: var(--ink);
+    position: relative;
+  }
+  .t-file:hover { background: var(--panel-2); }
+  .t-file:hover .t-action { opacity: 1; }
+  .t-indent {
+    border-left: 1px dashed #2a2f38;
+    height: 22px;
+    margin-left: 12px;
+  }
+  .t-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #3a4050;
+  }
+  .t-dot.live {
+    background: var(--good);
+    box-shadow: 0 0 0 3px rgba(126,224,200,0.12);
+  }
+  .t-dot.draft {
+    background: transparent;
+    border: 1.5px solid #5a6172;
+    width: 7px;
+    height: 7px;
+  }
+  .t-dot.new {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,184,107,0.18);
+  }
+  .t-fname { font-family: var(--mono); font-size: 13px; color: var(--ink); }
+  .t-time { font-family: var(--mono); font-size: 11px; color: var(--ink-3); text-align: right; }
+  .t-action {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent-2);
+    text-align: right;
+    opacity: 0;
+    transition: opacity .14s ease;
+  }
+  .t-action.always { opacity: 0.6; }
+  .t-file.fresh { background: rgba(255,184,107,0.04); }
+
+  .mock-toast {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    background: #0a0b0e;
+    border: 1px solid #2f3540;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent-2);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .mock-toast .toast-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--good);
+    box-shadow: 0 0 0 3px rgba(126,224,200,0.18);
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin: 14px 0;
+  }
+  .swatch {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px;
+    background: var(--panel);
+  }
+  .swatch .chip {
+    height: 28px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  .swatch .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    display: flex;
+    justify-content: space-between;
+  }
+  .swatch .label span:last-child { color: var(--ink-2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">v1 plan · 2026-05-14</div>
+    <h1>Point at a folder.<br/><span class="accent">Publish what matters.</span></h1>
+    <p class="tagline">The problem with AI-generated HTML artifacts isn't generation — it's everything that happens after. v1 is the smallest thing that makes the after part disappear.</p>
+    <div class="stack-pill"><span class="dot"></span> stack confirmed · cloudflare workers + r2</div>
+    <nav class="toc">
+      <a href="#thesis">thesis</a>
+      <a href="#journey">user journey</a>
+      <a href="#arch">architecture</a>
+      <a href="#decisions">key decisions</a>
+      <a href="#stack">stack</a>
+      <a href="#ui">the feel</a>
+      <a href="#file-list">file list</a>
+      <a href="#security">security</a>
+      <a href="#cost">cost</a>
+      <a href="#cut">what's cut</a>
+      <a href="#plan">2-week build</a>
+      <a href="#risks">risks</a>
+    </nav>
+  </header>
+
+  <!-- THESIS -->
+  <section id="thesis">
+    <h2>00 · thesis</h2>
+    <p class="pull">Files are for things humans author. AI artifacts are something else. v1 doesn't try to replace the filesystem — it sits next to it and turns the ones worth sharing into URLs.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4>The pain we're killing</h4>
+        <ul>
+          <li>Tab sprawl — one browser tab per artifact, refreshed by hand.</li>
+          <li>Where-did-I-save-it — Claude names files <code>plan_v3_final.html</code>.</li>
+          <li>Sharing friction — markdown can't be sent, HTML files don't have URLs.</li>
+          <li>Update dance — agent edits the file, you reload, the link you sent goes stale.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>What v1 promises</h4>
+        <ul>
+          <li><strong>No install.</strong> A URL you visit in Chrome.</li>
+          <li><strong>One folder, one app tab.</strong> Everything else is a link.</li>
+          <li><strong>One click to publish.</strong> URL appears, auto-copies, paste in Slack.</li>
+          <li><strong>Republishing keeps the same URL.</strong> The link you sent still works after Claude edits.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- USER JOURNEY -->
+  <section id="journey">
+    <h2>01 · the user journey</h2>
+    <p>One folder. One app tab. The rest is paste-the-link.</p>
+
+    <div class="journey">
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Open the app in Chrome / Edge / Arc / Brave</h3>
+          <div class="body">No install. The app is a single static page. First visit asks for a folder, granted via <code>showDirectoryPicker()</code>. The handle is stored in IndexedDB so the next visit skips the prompt.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Point it at your Claude Code projects folder</h3>
+          <div class="body">The app walks the folder and lists every <code>.html</code> file, newest first. Subfolders are shown collapsed. <code>FileSystemObserver</code> (Chrome 133+) pushes change events — no polling, no refresh button.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Claude generates <code>onboarding_v3.html</code> — it appears in the list instantly</h3>
+          <div class="body">A "new" badge on the row. Click the filename to preview it inline (sandboxed iframe). The preview reads the file directly from disk via the handle — nothing has been uploaded yet.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Click <span class="kbd">Publish</span> — URL appears and is auto-copied</h3>
+          <div class="body">Toast slides in: "Copied. <code>art.artifaq-user.net/a/k3n9pQr2Lm4x</code>". No modal, no naming step. The URL is the receipt. Paste it in Slack while it's still warm.</div>
+          <pre class="url">https://art.artifaq-user.net/a/k3n9pQr2Lm4x</pre>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Teammate opens the link — no account, no app, no install</h3>
+          <div class="body">They see the artifact, full-bleed, with a slim top bar (filename, last-updated, copy-link, view-source). It works on phones. It works in Safari. It works for the PM who never installed your tool.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Claude edits the file — your app shows "changed"</h3>
+          <div class="body">The row gets an orange dot. Click <span class="kbd">Update</span> — the same URL now serves the new content. The link you pasted in Slack hours ago still works; your teammate just refreshes.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>That's the whole product</h3>
+          <div class="body">No canvas. No comments. No projects. No accounts. The folder is the project. The URL is the share button. The toast is the celebration.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE DIAGRAM -->
+  <section id="arch">
+    <h2>02 · architecture</h2>
+    <p>Three pieces. One bill. The user's machine on the left, two domains on the right, R2 in the middle.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 920 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#7ee0c8" />
+          </marker>
+          <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#ffb86b" />
+          </marker>
+        </defs>
+
+        <!-- left: user machine -->
+        <rect x="20" y="40" width="260" height="300" rx="14" fill="#16181d" stroke="#262a33"/>
+        <text x="40" y="68" fill="#a8adb8" font-family="ui-monospace,Menlo,monospace" font-size="11" letter-spacing=".1em">USER · CHROMIUM</text>
+
+        <!-- folder -->
+        <rect x="44" y="86" width="212" height="76" rx="8" fill="#1c1f26" stroke="#2f3540"/>
+        <text x="58" y="108" fill="#e7e9ee" font-size="13" font-family="ui-monospace,Menlo,monospace">~/projects/onboarding/</text>
+        <text x="58" y="128" fill="#a8adb8" font-size="11" font-family="ui-monospace,Menlo,monospace">onboarding_v3.html</text>
+        <text x="58" y="144" fill="#a8adb8" font-size="11" font-family="ui-monospace,Menlo,monospace">streaming_review.html</text>
+        <text x="58" y="160" fill="#a8adb8" font-size="11" font-family="ui-monospace,Menlo,monospace">rate_limiter_doc.html</text>
+
+        <!-- app -->
+        <rect x="44" y="180" width="212" height="140" rx="8" fill="#1c1f26" stroke="#ffb86b"/>
+        <text x="58" y="202" fill="#ffb86b" font-size="12" font-family="ui-monospace,Menlo,monospace">app.artifaq.io · React SPA</text>
+        <text x="58" y="222" fill="#e7e9ee" font-size="12">▸ showDirectoryPicker()</text>
+        <text x="58" y="240" fill="#e7e9ee" font-size="12">▸ FileSystemObserver</text>
+        <text x="58" y="258" fill="#e7e9ee" font-size="12">▸ IndexedDB (handle)</text>
+        <text x="58" y="276" fill="#e7e9ee" font-size="12">▸ POST /publish on click</text>
+        <text x="58" y="298" fill="#7ee0c8" font-size="11" font-family="ui-monospace,Menlo,monospace">~40KB gz · static</text>
+
+        <!-- middle: worker -->
+        <rect x="330" y="120" width="240" height="140" rx="14" fill="#16181d" stroke="#262a33"/>
+        <text x="350" y="148" fill="#a8adb8" font-family="ui-monospace,Menlo,monospace" font-size="11" letter-spacing=".1em">CLOUDFLARE</text>
+        <rect x="350" y="160" width="200" height="38" rx="6" fill="#1c1f26" stroke="#ffb86b"/>
+        <text x="362" y="184" fill="#e7e9ee" font-size="13">Worker (~80 lines)</text>
+        <rect x="350" y="208" width="200" height="38" rx="6" fill="#1c1f26" stroke="#7ee0c8"/>
+        <text x="362" y="232" fill="#e7e9ee" font-size="13">R2 bucket (artifacts)</text>
+
+        <!-- right: serving -->
+        <rect x="620" y="40" width="280" height="300" rx="14" fill="#16181d" stroke="#262a33"/>
+        <text x="640" y="68" fill="#a8adb8" font-family="ui-monospace,Menlo,monospace" font-size="11" letter-spacing=".1em">SERVED · SEPARATE eTLD+1</text>
+
+        <rect x="640" y="86" width="240" height="100" rx="8" fill="#1c1f26" stroke="#2f3540"/>
+        <text x="654" y="108" fill="#7ee0c8" font-size="12" font-family="ui-monospace,Menlo,monospace">art.artifaq-user.net</text>
+        <text x="654" y="128" fill="#e7e9ee" font-size="12">/a/{id} → viewer page</text>
+        <text x="654" y="146" fill="#e7e9ee" font-size="12">/raw/{id} → raw HTML</text>
+        <text x="654" y="166" fill="#a8adb8" font-size="11" font-family="ui-monospace,Menlo,monospace">CSP: sandbox · nosniff</text>
+
+        <rect x="640" y="200" width="240" height="120" rx="8" fill="#1c1f26" stroke="#2f3540"/>
+        <text x="654" y="222" fill="#ffb86b" font-size="12" font-family="ui-monospace,Menlo,monospace">teammate · any browser</text>
+        <text x="654" y="244" fill="#e7e9ee" font-size="12">▸ opens link, sees artifact</text>
+        <text x="654" y="262" fill="#e7e9ee" font-size="12">▸ no account, no install</text>
+        <text x="654" y="280" fill="#e7e9ee" font-size="12">▸ refresh to see updates</text>
+        <text x="654" y="306" fill="#7ee0c8" font-size="11" font-family="ui-monospace,Menlo,monospace">Safari / FF / mobile OK</text>
+
+        <!-- arrows -->
+        <path d="M 260 240 Q 295 240, 330 200" stroke="#ffb86b" stroke-width="2" fill="none" marker-end="url(#arr2)"/>
+        <text x="265" y="218" fill="#ffb86b" font-size="11" font-family="ui-monospace,Menlo,monospace">PUT</text>
+
+        <path d="M 570 200 Q 595 150, 640 115" stroke="#7ee0c8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+        <text x="580" y="155" fill="#7ee0c8" font-size="11" font-family="ui-monospace,Menlo,monospace">GET</text>
+      </svg>
+    </div>
+
+    <div class="grid-3" style="margin-top:14px;">
+      <div class="card">
+        <h4 style="color:var(--accent);">Client</h4>
+        <p style="margin:0;color:var(--ink-2);font-size:14px;">Vite + React, ~40KB gz. Talks to disk via File System Access API. Talks to backend via one POST.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent);">Backend</h4>
+        <p style="margin:0;color:var(--ink-2);font-size:14px;">One Worker. <code>POST /publish</code>, <code>GET /raw/:id</code>, <code>GET /a/:id</code>. R2 PUT/GET. ~80 lines.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent);">Serving</h4>
+        <p style="margin:0;color:var(--ink-2);font-size:14px;">A separate registered domain. The app and the artifacts can never read each other's cookies.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY DECISIONS -->
+  <section id="decisions">
+    <h2>03 · key design decisions</h2>
+    <p>Every "yes" here is a "no" to three other options. The why matters more than the what — it's what tells you whether to change the answer when conditions change.</p>
+
+    <div class="decision">
+      <header>
+        <span class="q">Chromium-only — or build a Safari/Firefox fallback?</span>
+        <span class="verdict">Chromium-only</span>
+      </header>
+      <div class="why">
+        <p><strong>Why:</strong> File System Access API + FileSystemObserver simply do not exist outside Chromium and Mozilla has said no. The "fallback" — drag-and-drop or <code>&lt;input webkitdirectory&gt;</code> — gives you a one-shot snapshot with no watching, no persistence, no re-prompts. That's not a degraded version of the product, it's a different (worse) product.</p>
+        <p><strong>Implication:</strong> Excludes ~30% of the global market but our target audience (devs using Claude Code) is overwhelmingly on Chrome/Arc/Brave/Edge. Better to be excellent for 70% than mediocre for 100%. Show a friendly browser-check screen with one-click "open in Chrome" intent.</p>
+        <p><strong>When to revisit:</strong> If Apple ships it (don't hold your breath). Or if the audience widens to non-developers.</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">Auto-publish every file — or let the user pick which ones?</span>
+        <span class="verdict">User picks</span>
+      </header>
+      <div class="why">
+        <p><strong>Why:</strong> Auto-publish is the AI-tool default and it's wrong. 18 of every 20 generations are noise. Auto-publish means every half-baked exploration leaks to a server. It also forces an account ("whose noise is this?") and burns trust.</p>
+        <p><strong>Implication:</strong> The local app is private by default — nothing leaves your machine until you press a button. This is the biggest single difference between our product and "Claude artifacts in the cloud."</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">Stable URL on republish — or immutable per-version URL?</span>
+        <span class="verdict">Stable URL per local file</span>
+      </header>
+      <div class="why">
+        <p><strong>Why:</strong> The article's whole pitch was "I'm increasingly not editing files myself, Claude is." That means the file iterates. If every iteration mints a new URL, every paste in Slack rots within an hour. The article's emphasis on hot-reload tells us live-updating is the value, not version pinning.</p>
+        <p><strong>How:</strong> Each local file path gets one slot (12-char nanoid). Re-publishing the same file overwrites that slot's content but keeps the URL. There's also a "Publish as new" affordance for when you explicitly want a frozen version (sending to a client, attaching to a PR).</p>
+        <p><strong>Trade-off:</strong> Immutability is safer for screenshots and forensic clarity. We give that up in exchange for the link surviving Claude's next edit. Vercel's pattern (immutable deploys + a mutable alias) is the right v2.</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">Login on day one — or anonymous capability URLs?</span>
+        <span class="verdict">Anonymous, 30-day TTL</span>
+      </header>
+      <div class="why">
+        <p><strong>Why:</strong> Login crushes the funnel and Loom/Excalidraw/file.io all proved the URL itself can be the credential. The path's random 12 chars ≈ 71 bits — unguessable. Bots are kept out with Cloudflare Turnstile and an IP rate-limit, not an account wall.</p>
+        <p><strong>Lifecycle:</strong> Anonymous artifacts auto-expire after 30 days of no access (R2 lifecycle rule). A "claim with email" button lets a user keep things forever — but we don't ask for it on the first click.</p>
+        <p><strong>When to revisit:</strong> The moment people start asking "where are my old artifacts." That's the signal to add the magic-link account, not a day earlier.</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">Single big HTML — or bundle local assets (CSS, images, JS)?</span>
+        <span class="verdict">Single file only in v1</span>
+      </header>
+      <div class="why">
+        <p><strong>Why:</strong> ~95% of Claude-generated HTML is self-contained — inline CSS, inline SVG, sometimes a CDN script. The 5% that links to local <code>./style.css</code> is solvable but adds: dependency walking, blob URL rewriting or a service-worker resolver, asset upload, asset GC, broken-link UX. None of that is the core promise. Detect external local refs at publish time and show a clear "this file references <code>./logo.png</code> — that won't be included" warning.</p>
+        <p><strong>v2:</strong> Bundle assets via JSZip + multi-object R2 upload. Or rewrite to inline data-URIs (works for images/css under ~2MB).</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">Same-origin URL — or separate registered domain for artifacts?</span>
+        <span class="verdict">Separate eTLD+1, always</span>
+      </header>
+      <div class="why">
+        <p><strong>Why:</strong> Serving user-controlled HTML on your app's domain is "essentially one massive XSS vulnerability" (CodePen's own words). The user's <code>&lt;script&gt;</code> can read your app's cookies, localStorage, IndexedDB. This is why GitHub uses <code>githubusercontent.com</code> and CodePen uses <code>cdpn.io</code> — different registrable domains, so the same-origin policy and SameSite cookie rules build a real wall.</p>
+        <p><strong>Cost:</strong> $12/yr for the second domain. Cheapest security measure you'll ever buy.</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">Folders vs. projects vs. tags as the unit of organization?</span>
+        <span class="verdict">The folder is the project</span>
+      </header>
+      <div class="why">
+        <p><strong>Why:</strong> The user already organizes their work in folders. Inventing a separate "project" concept duplicates that organization and forces a sync problem we don't need. In v1 the app shows one folder at a time. You can pin multiple folders in the sidebar later, but each is just a saved handle.</p>
+        <p><strong>Implication:</strong> Switching projects = switching folders. Recent folders are saved in IndexedDB. No database needed.</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">Live hot-reload to teammates — or manual refresh?</span>
+        <span class="verdict">Manual refresh in v1</span>
+      </header>
+      <div class="why">
+        <p><strong>Why:</strong> Real-time push needs WebSockets, a persistent connection per viewer, presence, and "did the publisher click update yet" logic. None of that is necessary for the core value (the link stays the same, refresh shows latest). Skipping it saves a week.</p>
+        <p><strong>v2:</strong> Server-sent events on the viewer page → toast "new version available, refresh." Cheap to add later, expensive to build prematurely.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section id="stack">
+    <h2>04 · the stack</h2>
+    <p>Opinionated. Boring. Cheap. Two weekends.</p>
+
+    <div class="card">
+      <div class="stack-row">
+        <div class="label">frontend</div>
+        <div>
+          <div class="pick">Vite + React + TypeScript</div>
+          <div class="note">No SSR needed, no SEO needed. ~40KB gz, instant HMR. Static output deploys to Cloudflare Pages. Next/Astro/SvelteKit are all overkill for a control-panel SPA. <span class="cut">Next.js</span> <span class="cut">SvelteKit</span> <span class="cut">Astro</span></div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="label">backend</div>
+        <div>
+          <div class="pick">1 Cloudflare Worker + 1 R2 bucket</div>
+          <div class="note">Hono inside the Worker for tidy routing. No database — metadata lives in R2 object metadata + a sidecar <code>.json</code> per artifact. Worker is ~80 lines.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="label">file-watch</div>
+        <div>
+          <div class="pick">FileSystemObserver (Chrome 133+)</div>
+          <div class="note">Real change events, no polling. Wrap in try/catch and fall back to 2s polling against <code>(name, size, mtime)</code> tuples if the API is unavailable.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="label">storage of folder handle</div>
+        <div>
+          <div class="pick">IndexedDB</div>
+          <div class="note"><code>FileSystemDirectoryHandle</code> is structured-clonable. Persistent permissions land you a silent re-grant on most reopens (Chrome 122+).</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="label">auth</div>
+        <div>
+          <div class="pick">None. Capability URL.</div>
+          <div class="note">nanoid(12) ≈ 71 bits, unguessable. Cloudflare Turnstile on /publish. IP rate-limit (10/min) via Workers KV.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="label">app domain</div>
+        <div>
+          <div class="pick">app.artifaq.io <span class="badge">placeholder</span></div>
+          <div class="note">Static SPA on Cloudflare Pages.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="label">artifact domain</div>
+        <div>
+          <div class="pick">art.artifaq-user.net <span class="badge">placeholder</span></div>
+          <div class="note">Separate registered domain — non-negotiable for security. Wildcard DNS to the Worker.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="label">expiration</div>
+        <div>
+          <div class="pick">30 days from last access</div>
+          <div class="note">R2 lifecycle rule. "Claim with email" button extends to forever.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="label">payments</div>
+        <div>
+          <div class="pick">none in v1</div>
+          <div class="note">Free, capped at 100 published artifacts per IP. Pricing comes after we see usage shapes.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Why no database in v1?</strong> R2 object metadata + a per-artifact <code>meta.json</code> sidecar is enough for: original filename, created_at, content_hash, last_updated. No queries to run. No joins. Adding Postgres or D1 the moment we need to query across artifacts is trivial — but we don't need to yet.
+    </div>
+  </section>
+
+  <!-- UI / UX PRINCIPLES -->
+  <section id="ui">
+    <h2>05 · the feel</h2>
+    <p class="pull">Premium isn't ornament. It's restraint. Eight rules we don't break.</p>
+
+    <div class="card" style="padding: 0;">
+      <div class="principle">
+        <div class="p-num">01</div>
+        <div>
+          <h4>Calm over loud</h4>
+          <p>One accent color. Low default contrast. The app is stagehands, the artifact is the star. Nothing in our UI should ever pull the eye away from what Claude just made.</p>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="p-num">02</div>
+        <div>
+          <h4>Type does the work</h4>
+          <p>Hierarchy via weight and size, not boxes and dividers everywhere. Borders are reserved for things you can act on (buttons, inputs). Lists are just well-spaced text.</p>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="p-num">03</div>
+        <div>
+          <h4>Motion confirms, never decorates</h4>
+          <p>Animation only after a user action — a 200ms slide-up for the toast, a 140ms fade for a dot turning green. Nothing pulses, breathes, or animates on load. No skeleton shimmer.</p>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="p-num">04</div>
+        <div>
+          <h4>Single column, no panels</h4>
+          <p>The file tree is the whole app. Preview opens inline below the row. Settings open inline. No left/right split. No resizable panels. No collapse-toggle for a sidebar that shouldn't exist.</p>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="p-num">05</div>
+        <div>
+          <h4>Keyboard-first, mouse second</h4>
+          <p><span class="kbd">j</span> <span class="kbd">k</span> to move · <span class="kbd">space</span> to preview · <span class="kbd">↵</span> to publish · <span class="kbd">⌘C</span> to re-copy a live URL · <span class="kbd">/</span> to filter · <span class="kbd">?</span> to see the rest. Discoverable via a quiet "?" badge in the corner — never a tour.</p>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="p-num">06</div>
+        <div>
+          <h4>State visible, never noisy</h4>
+          <p>A 6px colored dot is the entire status indicator. A faint mono timestamp tells you when. No "MODIFIED" labels, no colored badges, no banners. The signal is always there; you look at it on purpose.</p>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="p-num">07</div>
+        <div>
+          <h4>The toast is the celebration</h4>
+          <p>Publishing is the one moment that earns motion. The URL slides up from the bottom-right — pre-copied — with a single fading "copied" caption. Three seconds, then gone. No confetti. No modal. No "are you sure."</p>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="p-num">08</div>
+        <div>
+          <h4>Empty states are full sentences</h4>
+          <p>Not "No files." Instead: <em>"Point this at a folder and we'll list every <code>.html</code> file inside — including nested ones. Drop one here, or pick a folder above."</em> Words do the work boxes can't.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px;">Visual language</h3>
+    <p>Everything in the app is built from this palette and these type sizes. If a screen needs more, we redesign instead of adding.</p>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:#0e0f12;"></div><div class="label"><span>bg</span><span>#0e0f12</span></div></div>
+      <div class="swatch"><div class="chip" style="background:#16181d;"></div><div class="label"><span>panel</span><span>#16181d</span></div></div>
+      <div class="swatch"><div class="chip" style="background:#e7e9ee;"></div><div class="label"><span>ink</span><span>#e7e9ee</span></div></div>
+      <div class="swatch"><div class="chip" style="background:#a8adb8;"></div><div class="label"><span>ink-2</span><span>#a8adb8</span></div></div>
+      <div class="swatch"><div class="chip" style="background:#ffb86b;"></div><div class="label"><span>accent</span><span>#ffb86b</span></div></div>
+      <div class="swatch"><div class="chip" style="background:#7ee0c8;"></div><div class="label"><span>live</span><span>#7ee0c8</span></div></div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-3);">Type: Inter for UI, system stack as fallback. Monospace: SF Mono / Menlo. Three sizes only — <code>13</code>, <code>15</code>, <code>22</code> — plus the hero. Line-height 1.55. Letter-spacing -0.01em on headings, +0.08em on monospace labels.</p>
+  </section>
+
+  <!-- FILE LIST ANATOMY -->
+  <section id="file-list">
+    <h2>06 · the file list</h2>
+    <p>The list <em>is</em> the product. Every detail of how it behaves is worth thinking through. Including the small ones.</p>
+
+    <h3 style="margin-top:18px;">What you see when you pick a folder</h3>
+    <p>One folder. Walked recursively. Every <code>.html</code> file inside it — including in nested subfolders — laid out as a tree. Folders are <strong>expanded by default</strong>, with a chevron to collapse. Files are sorted newest-first inside their parent. <code>.git</code>, <code>node_modules</code>, <code>dist</code>, <code>.next</code> are skipped silently — a "show hidden folders" toggle exists for the 2% who need it.</p>
+
+    <div class="mock" aria-label="File list mockup">
+      <div class="mock-bar">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M10.5 10.5l3 3"/></svg>
+        <span class="mock-placeholder">filter onboarding</span>
+        <span class="mock-shortcut">/</span>
+      </div>
+      <div class="mock-summary">
+        <span class="mock-path">~/projects/onboarding</span>
+        <span class="mock-meta">12 files · 3 live</span>
+      </div>
+
+      <div class="tree">
+        <div class="t-folder">
+          <span class="chev">▾</span>
+          <span class="t-name">explorations</span>
+          <span class="t-count">3</span>
+        </div>
+        <div class="t-file">
+          <span class="t-indent"></span>
+          <span class="t-dot live"></span>
+          <span class="t-fname">option_a_grid.html</span>
+          <span class="t-time">2m</span>
+          <span class="t-action always">copy</span>
+        </div>
+        <div class="t-file">
+          <span class="t-indent"></span>
+          <span class="t-dot draft"></span>
+          <span class="t-fname">option_b_single.html</span>
+          <span class="t-time">8m</span>
+          <span class="t-action">publish</span>
+        </div>
+        <div class="t-file">
+          <span class="t-indent"></span>
+          <span class="t-dot live"></span>
+          <span class="t-fname">option_c_minimal.html</span>
+          <span class="t-time">15m</span>
+          <span class="t-action always">copy</span>
+        </div>
+
+        <div class="t-folder">
+          <span class="chev">▾</span>
+          <span class="t-name">specs</span>
+          <span class="t-count">2</span>
+        </div>
+        <div class="t-file">
+          <span class="t-indent"></span>
+          <span class="t-dot draft"></span>
+          <span class="t-fname">implementation_plan.html</span>
+          <span class="t-time">1h</span>
+          <span class="t-action">publish</span>
+        </div>
+        <div class="t-file">
+          <span class="t-indent"></span>
+          <span class="t-dot live"></span>
+          <span class="t-fname">data_flow.html</span>
+          <span class="t-time">2h</span>
+          <span class="t-action always">copy</span>
+        </div>
+
+        <div class="t-folder">
+          <span class="chev">▾</span>
+          <span class="t-name">(root)</span>
+          <span class="t-count">1</span>
+        </div>
+        <div class="t-file fresh">
+          <span class="t-indent"></span>
+          <span class="t-dot new"></span>
+          <span class="t-fname">onboarding_v3.html</span>
+          <span class="t-time">just now</span>
+          <span class="t-action">publish</span>
+        </div>
+      </div>
+
+      <div class="mock-toast">
+        <span class="toast-dot"></span>
+        <span>copied · art.artifaq-user.net/a/k3n9pQr2Lm4x</span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-3);margin-top:-2px;">Hover any file row to reveal its action. Already-published rows keep <em>copy</em> always-visible at low opacity. The orange-tinted row is one that appeared in the last 60 seconds.</p>
+
+    <h3 style="margin-top:32px;">A row, broken down</h3>
+    <table>
+      <thead><tr><th>Element</th><th>What it is</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>● dot</td><td>6px status: <span style="color:#7ee0c8;">live</span>, draft (ring), <span style="color:#ffb86b;">new</span>, grey (untouched)</td><td>Color is the only chrome. No badges, pills, or labels.</td></tr>
+        <tr><td>filename</td><td>Just the file's own name in monospace, not the full path</td><td>The tree already shows the parent. Full path appears in a tooltip on long-hover.</td></tr>
+        <tr><td>timestamp</td><td>Relative, faint mono — <code>2m</code>, <code>1h</code>, <code>just now</code></td><td>Always present, always quiet. Click to flip to absolute.</td></tr>
+        <tr><td>action</td><td><strong>publish</strong> if not live, <strong>copy</strong> if live. Appears on row-hover or focus.</td><td>Hidden by default keeps the list calm. Visible always on touch devices.</td></tr>
+        <tr><td>row click</td><td>Toggle inline sandboxed preview underneath the row</td><td>One click, no modal. <span class="kbd">space</span> from keyboard.</td></tr>
+        <tr><td>right-click</td><td>Menu: publish as new · reveal in Finder · exclude from list · open URL</td><td>Power-user surface. No primary path goes through it.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:32px;">Folder behavior — the small things</h3>
+    <ul>
+      <li><strong>Default expanded.</strong> When you first pick a folder, every subfolder is open. You see everything, immediately. No "click to expand 6 levels."</li>
+      <li><strong>Chevron only on hover for empty folders.</strong> Folders with zero <code>.html</code> files inside don't render at all.</li>
+      <li><strong>Collapse state is remembered per-folder.</strong> Stored in IndexedDB alongside the handle, so reopening the tab feels like coming back to where you were.</li>
+      <li><strong>Indentation uses dashed guides</strong> — not solid lines. Visible enough to follow, quiet enough to ignore.</li>
+      <li><strong>The folder name shows the file count</strong> in faint mono next to it, so you know how big it is without expanding.</li>
+      <li><strong>Files at the root</strong> appear under a folder labeled <code>(root)</code> only when there are subfolders too — otherwise they just sit at the top.</li>
+      <li><strong>Click anywhere on a folder row</strong> to collapse / expand, not just the chevron. The whole row is the affordance.</li>
+    </ul>
+
+    <h3 style="margin-top:32px;">Status vocabulary — four states only</h3>
+    <ul>
+      <li><strong>untouched</strong> — exists on disk, never published, never previewed. Grey filled dot.</li>
+      <li><strong>new</strong> — appeared in the last 60 seconds. Soft orange dot with a faint glow ring. Decays back to <em>untouched</em> after the timer or after you preview.</li>
+      <li><strong>draft</strong> — previewed but not yet published. Hollow grey ring.</li>
+      <li><strong>live</strong> — published to a URL. Green dot with a soft glow. If the file on disk is newer than what's on R2, the glow grows slightly: "click <em>copy</em> menu → <em>push update</em>."</li>
+    </ul>
+
+    <h3 style="margin-top:32px;">Search &amp; filter</h3>
+    <p>Sticky input at the top of the list. <span class="kbd">/</span> focuses it from anywhere. Fuzzy match on filename and folder path. Folders auto-collapse when their entire subtree filters out — no "tree of empties." <span class="kbd">esc</span> clears the filter and restores prior collapse state.</p>
+
+    <h3 style="margin-top:32px;">The publish moment, frame by frame</h3>
+    <ol>
+      <li><strong>0ms</strong> — you click <em>publish</em> (or hit <span class="kbd">↵</span>).</li>
+      <li><strong>~80ms</strong> — the request is in flight; the row's dot dims slightly.</li>
+      <li><strong>~250ms</strong> — response arrives. The dot transitions grey → green over 140ms.</li>
+      <li><strong>+0ms</strong> — toast slides up from bottom-right with the URL, already in your clipboard.</li>
+      <li><strong>+3s</strong> — toast fades. You've already pasted it in Slack. Nothing else moved.</li>
+    </ol>
+    <p>No success modal. No "share to Slack" button. No "view artifact" CTA. The clipboard is the share button.</p>
+
+    <h3 style="margin-top:32px;">Empty &amp; edge states</h3>
+    <ul>
+      <li><strong>No folder yet:</strong> a single button — "Pick a folder." That's the entire screen.</li>
+      <li><strong>Folder picked, no HTML inside:</strong> "No HTML files in this folder yet. We're watching — anything you (or Claude) drops in will appear here."</li>
+      <li><strong>Permission revoked by OS:</strong> soft amber bar at top: "We've lost access to this folder. Click to grant again."</li>
+      <li><strong>Publish failed:</strong> toast turns red, contains a retry button. Row stays in <em>draft</em> state.</li>
+      <li><strong>File deleted on disk:</strong> row fades to 40% opacity for 5 seconds, then drops out. No "are you sure" — disk is truth.</li>
+      <li><strong>File references local <code>./assets</code>:</strong> a one-time inline note appears under the row at publish time: "this links to <code>./logo.png</code>, which won't be included." User can publish anyway.</li>
+    </ul>
+  </section>
+
+  <!-- SECURITY -->
+  <section id="security">
+    <h2>07 · security — the things we get wrong once</h2>
+    <p>Hosting arbitrary user HTML is the riskiest part of this product. Most of the risk evaporates if you make four decisions correctly on day one.</p>
+
+    <table>
+      <thead><tr><th>Threat</th><th>Mitigation</th><th>Where</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>User HTML steals app cookies / localStorage</td>
+          <td>Serve from a different registered domain (different eTLD+1). Same-origin policy + SameSite cookies build the wall.</td>
+          <td>DNS / domain registration</td>
+        </tr>
+        <tr>
+          <td>User HTML inherits app session</td>
+          <td>Never set auth cookies on the artifact domain. Ever. Not even for "convenience."</td>
+          <td>Worker</td>
+        </tr>
+        <tr>
+          <td>User HTML escapes iframe sandbox in viewer</td>
+          <td>Wrap in <code>&lt;iframe sandbox="allow-scripts allow-forms allow-popups"&gt;</code>. Do NOT add <code>allow-same-origin</code> when iframe src is same-origin as parent — it lets the page strip its own sandbox.</td>
+          <td>Viewer page</td>
+        </tr>
+        <tr>
+          <td>MIME confusion / served-as-script attacks</td>
+          <td><code>Content-Type: text/html; charset=utf-8</code>. <code>X-Content-Type-Options: nosniff</code>.</td>
+          <td>Worker response</td>
+        </tr>
+        <tr>
+          <td>CSRF / referer abuse</td>
+          <td><code>Content-Security-Policy: sandbox allow-scripts;</code> on raw artifact responses.</td>
+          <td>Worker response</td>
+        </tr>
+        <tr>
+          <td>Bot upload abuse / storage flooding</td>
+          <td>Cloudflare Turnstile on /publish. Workers KV-backed IP rate limit. 30-day TTL.</td>
+          <td>Worker + lifecycle rule</td>
+        </tr>
+        <tr>
+          <td>Phishing / brand-impersonation HTML hosted on our URLs</td>
+          <td>Abuse-report endpoint. Manual takedown. Domain is clearly not a primary brand surface.</td>
+          <td>Operational</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>The rule we never break:</strong> the app and the artifacts cannot read each other. Anything you do to "make sharing nicer" that violates this rule is wrong — even if it works for v1.
+    </div>
+  </section>
+
+  <!-- COST -->
+  <section id="cost">
+    <h2>08 · cost — the back-of-envelope</h2>
+    <p>Worked out at v1 scale (10k–100k artifacts, ~50KB each, ~20 views per).</p>
+
+    <table>
+      <thead><tr><th>Line item</th><th>Math</th><th>Cost / mo</th></tr></thead>
+      <tbody>
+        <tr><td>R2 storage</td><td>100,000 × 50KB = 5GB (free tier covers 10GB)</td><td class="pick">$0</td></tr>
+        <tr><td>R2 Class-A writes (PUT)</td><td>100k publishes (free tier 1M)</td><td class="pick">$0</td></tr>
+        <tr><td>R2 Class-B reads (GET)</td><td>2M reads (free tier 10M)</td><td class="pick">$0</td></tr>
+        <tr><td>R2 egress</td><td>2M × 50KB = 100GB</td><td class="pick">$0 (R2 free egress)</td></tr>
+        <tr><td>Workers requests</td><td>~2.1M / mo (free tier 100k/day)</td><td>~$0.50</td></tr>
+        <tr><td>Cloudflare Pages</td><td>SPA hosting</td><td class="pick">$0</td></tr>
+        <tr><td>Domains</td><td>2 × ~$12/yr</td><td>~$2</td></tr>
+        <tr><td>Turnstile</td><td>free</td><td class="pick">$0</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="2" style="text-align:right;color:var(--ink-3);font-family:var(--mono);font-size:12px;">total</td><td class="pick">~$3 / mo</td></tr>
+      </tfoot>
+    </table>
+
+    <p style="color:var(--ink-2);font-size:14px;">10× this scale and you're still under $5/mo. The economics break only when a single artifact goes viral with multi-MB content. v1 enforces a 5MB per-artifact cap to be safe.</p>
+  </section>
+
+  <!-- WHAT'S CUT -->
+  <section id="cut">
+    <h2>09 · what we're explicitly cutting</h2>
+    <p>Every "no" here was once a "maybe." Naming them keeps us honest.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h4 style="color:var(--warn);">Cut from v1</h4>
+        <ul>
+          <li><span class="cut">Canvas / spatial layout with arrows</span> → v3</li>
+          <li><span class="cut">Comments / annotations on artifacts</span> → v2</li>
+          <li><span class="cut">Accounts &amp; cross-device library</span> → v1.5</li>
+          <li><span class="cut">Multi-file bundles (CSS / images)</span> → v2</li>
+          <li><span class="cut">Live push to viewers (SSE / WS)</span> → v2</li>
+          <li><span class="cut">Auto-publish on file change</span> → opt-in toggle in v2</li>
+          <li><span class="cut">Project / tag organization beyond folders</span> → v2 if asked</li>
+          <li><span class="cut">Search across artifacts</span> → v2 (when accounts ship)</li>
+          <li><span class="cut">Custom slugs / custom domains</span> → paid tier</li>
+          <li><span class="cut">Version history viewer</span> → v2</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--good);">Kept in v1</h4>
+        <ul>
+          <li>Folder pick &amp; live file list</li>
+          <li>Inline sandboxed preview</li>
+          <li>One-click publish → auto-copied URL</li>
+          <li>Stable URL on republish</li>
+          <li>"Publish as new" for when you want a frozen URL</li>
+          <li>Change detection (FileSystemObserver)</li>
+          <li>Viewer page with copy-link, view-source, last-updated</li>
+          <li>30-day TTL + abuse report</li>
+          <li>Browser gate for non-Chromium</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2-WEEK PLAN -->
+  <section id="plan">
+    <h2>10 · two-week build plan</h2>
+    <p>Sequenced so the riskiest stuff (the file system API, the sandbox domain) is proven first.</p>
+
+    <div class="timeline">
+      <div class="week">
+        <h4>WEEK 1 — END-TO-END SLICE</h4>
+        <ul>
+          <li><strong>Day 1:</strong> Vite+React app skeleton. Browser-detect gate. <code>showDirectoryPicker()</code> grants + IndexedDB store.</li>
+          <li><strong>Day 2:</strong> Recursive walk for <code>.html</code> files. FileSystemObserver integration with polling fallback. List UI with last-modified.</li>
+          <li><strong>Day 3:</strong> Inline preview (sandboxed iframe reading directly from the handle via blob URL).</li>
+          <li><strong>Day 4:</strong> Cloudflare Worker + R2 bucket provisioned. Second domain registered. <code>POST /publish</code> + <code>GET /raw/:id</code>.</li>
+          <li><strong>Day 5:</strong> Publish button → nanoid → upload → auto-copy URL + toast. CSP headers on raw responses. End-to-end working.</li>
+          <li><strong>Day 6:</strong> Viewer page <code>/a/:id</code> wrapping iframe with thin share bar. Copy-link, view-source, last-updated.</li>
+          <li><strong>Day 7:</strong> Internal eat-our-dog-food day. Use it for our own artifacts. Fix what's broken.</li>
+        </ul>
+      </div>
+      <div class="week">
+        <h4>WEEK 2 — POLISH &amp; SHIP</h4>
+        <ul>
+          <li><strong>Day 8:</strong> Republish-keeps-URL flow. Local map of <code>{filePath → slotId}</code> in IndexedDB. "Publish as new" affordance.</li>
+          <li><strong>Day 9:</strong> Turnstile on publish. IP rate-limit via Workers KV. Abuse-report endpoint.</li>
+          <li><strong>Day 10:</strong> 30-day TTL R2 lifecycle rule. Tested expiration path. "Renew" button on viewer page.</li>
+          <li><strong>Day 11:</strong> External-link warning at publish time (file references <code>./</code> assets). 5MB cap. Error states.</li>
+          <li><strong>Day 12:</strong> Landing page. Browser gate copy. Onboarding tooltip. Empty states.</li>
+          <li><strong>Day 13:</strong> Buffer day. Bug bash. Security pass — verify cookies can't leak, verify sandbox holds.</li>
+          <li><strong>Day 14:</strong> Soft launch — share with ~20 Claude Code users, post in 1–2 places. Collect first 100 publishes worth of feedback.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Definition of done for v1:</strong> A new user lands on the site, picks a folder of Claude-generated HTML files, publishes three of them, and shares the links in Slack — all in under 90 seconds, with zero install, zero login, and zero confusion.
+    </div>
+  </section>
+
+  <!-- RISKS -->
+  <section id="risks">
+    <h2>11 · honest risks</h2>
+
+    <div class="decision">
+      <header>
+        <span class="q">"Why install nothing? Why visit a website? Just give me a CLI."</span>
+        <span class="verdict">real</span>
+      </header>
+      <div class="why">
+        <p>Devs sometimes want the opposite of frictionless — they want a tool they own, locally, that pipes to their existing scripts. A CLI version (<code>artifaq publish ./plan.html</code>) is a strong v1.5. The web app and CLI share the Worker backend, so it's additive, not a rebuild.</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">Chromium-only excludes the long-tail user</span>
+        <span class="verdict">accepted</span>
+      </header>
+      <div class="why">
+        <p>Mitigated by the fact that viewing works everywhere — only publishing is gated. Mitigated further by clear messaging on the landing page. Re-evaluate at 1000 weekly active users: if 30%+ are bouncing on the browser gate, ship the drag-drop fallback.</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">"I already share Claude artifacts via [Claude.ai, GitHub Pages, val.town, Loom, Slack canvas...]"</span>
+        <span class="verdict">positioning</span>
+      </header>
+      <div class="why">
+        <p>Each of those has a flaw we exploit: Claude.ai requires Claude.ai. GitHub Pages needs a repo. val.town requires an account &amp; makes URLs containing your username. Loom is video. Slack canvas is in Slack. Our wedge: <em>anything any tool drops in a folder, online in one click</em>. Tool-agnostic + format-agnostic + login-free.</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">Storage / abuse spikes</span>
+        <span class="verdict">contained</span>
+      </header>
+      <div class="why">
+        <p>30-day TTL caps storage growth. Turnstile + per-IP rate limit caps publish floods. 5MB per-artifact cap caps single-blob explosions. R2 free tier holds at 200K active artifacts. If abuse becomes the dominant signal, we ship login on day 60.</p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <header>
+        <span class="q">The "stable URL on republish" decision breaks for users who want versioning</span>
+        <span class="verdict">addressed</span>
+      </header>
+      <div class="why">
+        <p>"Publish as new" exists exactly for them. v2 adds a per-slot history viewer (last 10 versions retained in R2 with date stamps). Until we see that demand, default stays as stable URLs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ONE-LINER CLOSE -->
+  <section style="margin-top:80px;">
+    <p class="pull" style="font-size:22px;">v1 is one thing: a website you visit in Chrome that turns selected HTML files in a folder into shareable URLs. Everything we built around that — Worker, R2, sandbox domain, capability URL, FileSystemObserver — exists only because the one thing has to feel effortless.</p>
+  </section>
+
+  <footer class="foot">
+    <p>v1 plan · drafted 2026-05-14 · stack: Vite + Cloudflare Workers + R2 · placeholder name: artifaq</p>
+    <p>Research grounded in: <a href="https://developer.chrome.com/docs/capabilities/web-apis/file-system-access">File System Access API</a> · <a href="https://developers.cloudflare.com/r2/pricing/">R2 pricing</a> · <a href="https://blog.codepen.io/2023/01/18/397-user-generated-content-saftey/">CodePen UGC writeup</a> · <a href="https://www.w3.org/2001/tag/doc/capability-urls/">W3C TAG Capability URLs</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "artifaq",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Point at a folder. Publish what matters.",
+  "type": "module",
+  "packageManager": "pnpm@10.10.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "fix": "biome check --write .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "deploy": "turbo run deploy",
+    "prepare": "lefthook install || true"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.0",
+    "lefthook": "^1.13.0",
+    "turbo": "^2.8.0",
+    "typescript": "^5.9.0"
+  }
+}

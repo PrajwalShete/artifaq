@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "biomejs.biome",
+    "bradlc.vscode-tailwindcss",
+    "cloudflare.cloudflare-workers-bindings",
+    "ms-vscode.vscode-typescript-next"
+  ]
+}

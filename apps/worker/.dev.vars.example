@@ -1,0 +1,4 @@
+# Copy to .dev.vars and fill in for `wrangler dev`.
+# Production secrets are set via `wrangler secret put TURNSTILE_SECRET`.
+
+TURNSTILE_SECRET=

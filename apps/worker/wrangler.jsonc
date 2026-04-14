@@ -1,0 +1,66 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "artifaq-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-12-30",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+
+  "r2_buckets": [
+    {
+      "binding": "ARTIFACTS",
+      "bucket_name": "artifaq-artifacts",
+      "preview_bucket_name": "artifaq-artifacts-preview"
+    }
+  ],
+
+  "kv_namespaces": [
+    {
+      "binding": "RATE_LIMIT",
+      "id": "REPLACE_WITH_KV_ID",
+      "preview_id": "REPLACE_WITH_KV_PREVIEW_ID"
+    }
+  ],
+
+  "vars": {
+    "ENVIRONMENT": "development",
+    "APP_ORIGIN": "http://localhost:5173",
+    "ARTIFACT_HOST": "art.artifaq-user.local",
+    "MAX_BYTES": "5242880",
+    "RATE_LIMIT_MAX": "10",
+    "RATE_LIMIT_WINDOW_SECONDS": "60"
+  },
+
+  "env": {
+    "production": {
+      "vars": {
+        "ENVIRONMENT": "production",
+        "APP_ORIGIN": "https://app.artifaq.io",
+        "ARTIFACT_HOST": "art.artifaq-user.net",
+        "MAX_BYTES": "5242880",
+        "RATE_LIMIT_MAX": "10",
+        "RATE_LIMIT_WINDOW_SECONDS": "60"
+      },
+      "r2_buckets": [
+        {
+          "binding": "ARTIFACTS",
+          "bucket_name": "artifaq-artifacts-prod"
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "RATE_LIMIT",
+          "id": "REPLACE_WITH_PROD_KV_ID"
+        }
+      ],
+      "routes": [
+        { "pattern": "api.artifaq.io/*", "zone_name": "artifaq.io" },
+        { "pattern": "art.artifaq-user.net/*", "zone_name": "artifaq-user.net" }
+      ]
+    }
+  }
+}

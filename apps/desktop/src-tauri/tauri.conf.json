@@ -1,0 +1,88 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Artifaq",
+  "version": "0.0.0",
+  "identifier": "io.artifaq.desktop",
+  "build": {
+    "beforeDevCommand": "pnpm dev:vite",
+    "beforeBuildCommand": "pnpm build:vite",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Artifaq",
+        "width": 980,
+        "height": 640,
+        "minWidth": 760,
+        "minHeight": 500,
+        "fullscreen": false,
+        "resizable": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "transparent": true,
+        "decorations": true,
+        "shadow": true,
+        "trafficLightPosition": { "x": 18, "y": 22 }
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost data: blob:; font-src 'self' data: https://rsms.me; style-src 'self' 'unsafe-inline' https://rsms.me; script-src 'self'; frame-src asset: http://asset.localhost data: blob:; connect-src 'self' ipc: http://ipc.localhost asset: http://asset.localhost https://api.artifaq.io https://art.artifaq-user.net",
+      "assetProtocol": {
+        "enable": true,
+        "scope": {
+          "allow": ["$HOME/**", "$DESKTOP/**", "$DOCUMENT/**", "$DOWNLOAD/**"],
+          "deny": ["$HOME/.ssh/**", "$HOME/.aws/**", "$HOME/.gnupg/**"]
+        }
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "category": "DeveloperTool",
+    "shortDescription": "Point at a folder. Publish what matters.",
+    "longDescription": "Artifaq lists every HTML file in a folder (and its subfolders), and turns the ones you select into stable shareable URLs.",
+    "copyright": "© 2026 Artifaq",
+    "targets": "all",
+    "createUpdaterArtifacts": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "signingIdentity": null,
+      "providerShortName": null,
+      "entitlements": null,
+      "dmg": {
+        "windowSize": { "width": 660, "height": 400 },
+        "appPosition": { "x": 180, "y": 170 },
+        "applicationFolderPosition": { "x": 480, "y": 170 }
+      }
+    },
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "http://timestamp.digicert.com",
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    },
+    "linux": {
+      "appimage": { "bundleMediaFramework": false }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": ["https://releases.artifaq.io/{{target}}-{{arch}}/{{current_version}}"],
+      "pubkey": "REPLACE_WITH_UPDATER_PUBKEY",
+      "windows": { "installMode": "passive" }
+    }
+  }
+}

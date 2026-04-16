@@ -1,0 +1,49 @@
+[package]
+name = "artifaq-desktop"
+version = "0.0.0"
+description = "Artifaq desktop app"
+authors = ["Artifaq"]
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "artifaq_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [
+  "macos-private-api",
+  "tray-icon",
+  "protocol-asset",
+  "image-png",
+] }
+tauri-plugin-dialog = "2"
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-store = "2"
+tauri-plugin-updater = "2"
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+
+# Tauri brings tokio; we use spawn_blocking for the directory walk.
+tokio = { version = "1", features = ["sync", "rt", "macros"] }
+
+# Ripgrep's walker — fast, gitignore-aware, prunes by name.
+ignore = "0.4"
+
+# File watching with rename coalescing.
+notify = "6"
+notify-debouncer-full = "0.3"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+window-vibrancy = "0.5"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

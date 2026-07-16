@@ -8,7 +8,7 @@ catalog:
   vitest: ^2.1.8
   zod: ^3.24.1
   hono: ^4.7.0
-  nanoid: ^5.0.9
+  nanoid: ^6.0.0
   '@cloudflare/workers-types': ^4.20250108.0
   '@cloudflare/vitest-pool-workers': ^0.5.40
   wrangler: ^4.0.0
